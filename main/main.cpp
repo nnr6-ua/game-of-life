@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <ctime>
+#include <iostream>
 
 using namespace std;
 
@@ -97,58 +98,73 @@ void manual_input (board_t &game){
 
 int main (int argc, char *argv[])
 {
-	board_t game;  /* Se declara el tablero del juego */
-
 	system("cls");
-	cout << "Wellcome to The Game of Life.\n" << endl;
+	cout << "Welcome to The Game of Life (Benchmark mode).\n" << endl;
 
-	if (argc>1){  /* Si se ejecuta el programa con parámetros, se comprueba si el primero es un fichero */
-		ifstream fi;
+	if (argc > 1) {  /* Si se ejecuta el programa con archivos por parámetro */
+		
+		for (int f = 1; f < argc; f++) {
+			cout << "=================================================" << endl;
+			cout << " EVALUANDO ARCHIVO: " << argv[f] << endl;
+			cout << "=================================================" << endl;
 
-		fi.open(argv[1]);  /* Se trata de abrir el fichero */
+			double suma_tiempos = 0.0; /* Variable para acumular los tiempos de las 3 ejecuciones */
 
-		if (!fi){  /* Si ocurre un error al intentar abrir el fichero... */
-			cerr << "Error opening the file " << argv[1] << ".\n" << endl;
-			cout << "You must enter the data manually...\n" << endl;
-			manual_input(game);  /* Se pide los datos por teclado */
-		}
-		else{  /* Si se abre el fichero correctamente... */
-			cout << "Press 'Enter' to begin.";
+			for (int run = 1; run <= 3; run++) {
+				board_t game;
+				ifstream fi;
+				fi.open(argv[f]);
 
-			int row;
-			int col;
-			int n_cells;
-			int m;
-			int n;
+				if (!fi) {
+					cerr << "Error opening the file " << argv[f] << ".\n" << endl;
+					break; 
+				}
+				
+				int row, col, n_cells, m, n;
 
-			/* Se leen los datos del fichero abierto */
-			fi >> row;
-			fi >> col;
+				/* Se leen los datos del fichero abierto */
+				fi >> row;
+				fi >> col;
 
-			game.resize_board(row, col);  /* Se redimensiona el tablero */
+				game.resize_board(row, col);
 
-			fi >> n_cells;
+				fi >> n_cells;
 
-			for (int i=0; i<n_cells; i++){
-				fi >> m;
-				fi >> n;
-				game.set_cell_alive(m, n);  /* Se establecen las células vivas */
+				for (int i = 0; i < n_cells; i++) {
+					fi >> m;
+					fi >> n;
+					game.set_cell_alive(m, n);
+				}
+				fi.close();
+
+				clock_t inicio = clock();
+				
+				game.game_of_life(); /* El write ya está comentado en la clase, así que esto volará */
+				
+				clock_t fin = clock(); 
+				double tiempo = static_cast<double>(fin - inicio) / CLOCKS_PER_SEC;
+				
+				suma_tiempos += tiempo; /* Sumamos el tiempo obtenido al total de este archivo */
+
+				cout << " - Partida " << run << ": " << tiempo << " segundos." << endl;
 			}
-			fi.close();  /* Se cierra el fichero */
+			
+			/* Terminadas las 3 partidas, calculamos y mostramos la media */
+			double media = suma_tiempos / 3.0;
+			cout << "\n>>> TIEMPO MEDIO PARA " << argv[f] << ": " << media << " segundos <<<\n\n" << endl;
 		}
 	}
-	else{  /* Si no se ejecuta el programa con parámetros, se pide los datos por teclado */
+	else {  /* Si no se ejecuta el programa con parámetros, se pide los datos por teclado */
+		board_t game;
 		manual_input(game);
+		
+		clock_t inicio = clock();
+		game.game_of_life(); 
+		clock_t fin = clock(); 
+
+		double tiempo = static_cast<double>(fin - inicio) / CLOCKS_PER_SEC;
+		cout << "\nEl programa ha tardado: " << tiempo << " segundos." << endl; 
 	}
-
-	clock_t inicio = clock();
-
-	game.game_of_life();  /* Se ejecuta El Juego de la Vida */
-	clock_t fin = clock(); 
-
-	double tiempo = static_cast<double>(fin - inicio) / CLOCKS_PER_SEC;
-
-	cout <<"El programa ha tardado: " << tiempo << endl; 
 
 	return 0;
 }
