@@ -6,9 +6,12 @@ SRC = src/
 SRC_FILES = $(SRC)cell_t.cpp $(SRC)board_t.cpp
 OUT = bin/
 OUT_FILE = $(OUT)juego-vida
-IN = input/
-IN_FILE = $(IN)default.txt
 
+# Tus 3 documentos distintos en la carpeta input
+IN = input/
+IN_FILE1 = $(IN)tablero1.txt
+IN_FILE2 = $(IN)tablero2.txt
+IN_FILE3 = $(IN)tablero3.txt
 
 # Reglas explícitas
 
@@ -19,7 +22,7 @@ manual:
 	$(OUT_FILE)
 
 file:
-	$(OUT_FILE) $(IN_FILE)
+	$(OUT_FILE) $(IN_FILE1) $(IN_FILE2) $(IN_FILE3)
 
 run: default manual
 
