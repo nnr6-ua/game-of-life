@@ -27,3 +27,6 @@ file:
 run: default manual
 
 run-file: default file
+
+clean: 
+	rm -rf $(OUT)
