@@ -12,6 +12,8 @@ IN = input/
 IN_FILE1 = $(IN)tablero1.txt
 IN_FILE2 = $(IN)tablero2.txt
 IN_FILE3 = $(IN)tablero3.txt
+IN_FILE4 = $(IN)tablero4.txt
+IN_FILE5 = $(IN)tablero5.txt
 
 # Reglas explícitas
 
@@ -22,10 +24,11 @@ manual:
 	$(OUT_FILE)
 
 file:
-	$(OUT_FILE) $(IN_FILE1) $(IN_FILE2) $(IN_FILE3)
+	$(OUT_FILE) $(IN_FILE1) $(IN_FILE2) $(IN_FILE3) $(IN_FILE4) $(IN_FILE5)
 
 run: default manual
 
+run-file: default file
 run-file: default file
 
 clean: 
